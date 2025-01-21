@@ -26,15 +26,13 @@ def scrape_page(page_url):
         if not product_frames:
             return False
 
+        # Extract and print product details
         for product in product_frames:
             name = product.find('h3', class_='item-product__name').get_text(strip=True)
             price = product.find('span', class_='now').get_text(strip=True)
             department = "All Departments"  # This is hardcoded for simplicity
-
             print(f"Name: {name}, Price: {price}, Department: {department}")
         
-        # Respect crawl delay
-        time.sleep(10)
         return True
     else:
         print(f"Failed to retrieve data. HTTP status code: {response.status_code}")
@@ -60,6 +58,8 @@ def scrape_all_pages():
             print("No more products found. Ending pagination.")
             break
 
+        # Delay between pages
+        time.sleep(10)
         page_number += 1
 
 # Run the scraper
