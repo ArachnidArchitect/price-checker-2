@@ -1,66 +1,84 @@
+import os
 import requests
 from bs4 import BeautifulSoup
-import time
-import datetime
+import json
+from datetime import datetime, timezone, time
+from google.cloud import firestore
+import time as sleep_time
 
-# Function to check if the current time is within allowed scraping hours
-def is_valid_scraping_time():
-    current_utc_time = datetime.datetime.utcnow().time()
-    # Check if the time is between 04:00 and 08:45 UTC
-    start_time = datetime.time(4, 0)
-    end_time = datetime.time(8, 45)
-    return start_time <= current_utc_time <= end_time
+# Set GOOGLE_APPLICATION_CREDENTIALS to point to the local service account key
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.path.dirname(__file__), "serviceAccountKey.json")
 
-# Function to scrape products from a given page URL
+# Initialize Firestore client
+db = firestore.Client()
+
+FIRESTORE_COLLECTION = "checkers_products"
+
+def save_to_firestore(products):
+    collection_ref = db.collection(FIRESTORE_COLLECTION)
+    for product in products:
+        try:
+            doc_ref = collection_ref.document(product["id"])
+            doc_ref.set(product)
+            print(f"Saved to Firestore: {product['name']} - {product['price']}")
+        except Exception as e:
+            print(f"Error saving to Firestore: {e}")
+
 def scrape_page(page_url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
     response = requests.get(page_url, headers=headers)
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
-
-        # Find all product frames
         product_frames = soup.find_all('div', class_='product-frame')
 
-        # If no product frames are found, return False to stop pagination
         if not product_frames:
             return False
 
-        # Extract and print product details
+        products = []
         for product in product_frames:
-            name = product.find('h3', class_='item-product__name').get_text(strip=True)
-            price = product.find('span', class_='now').get_text(strip=True)
-            department = "All Departments"  # This is hardcoded for simplicity
-            print(f"Name: {name}, Price: {price}, Department: {department}")
-        
+            try:
+                product_data = json.loads(product['data-product-ga'])
+                name = product_data.get('name', 'Unknown Product')
+                price = product_data.get('price', 'N/A')
+                product_id = product_data.get('id', 'Unknown ID')
+
+                products.append({
+                    "id": product_id,
+                    "name": name,
+                    "price": price,
+                    "scraped_at": datetime.now(timezone.utc).isoformat()
+                })
+            except (KeyError, json.JSONDecodeError) as e:
+                print(f"Error parsing product: {e}")
+
+        save_to_firestore(products)
         return True
     else:
         print(f"Failed to retrieve data. HTTP status code: {response.status_code}")
         return False
 
-# Function to handle pagination
 def scrape_all_pages():
     base_url = "https://www.checkers.co.za/c-2256/All-Departments?q=%3Arelevance%3AbrowseAllStoresFacetOff%3AbrowseAllStoresFacetOff&page="
-    page_number = 0
+    page_number = 0 #change this number to start on a different page
 
     while True:
-        # Construct the URL for the current page
-        page_url = f"{base_url}{page_number}"
-        
-        if not is_valid_scraping_time():
-            print("Scraping outside of allowed time window.")
-            return
-
-        print(f"Scraping page {page_number}...")
-        has_data = scrape_page(page_url)
-        
-        if not has_data:
-            print("No more products found. Ending pagination.")
+        current_utc_time = datetime.now(timezone.utc).time()
+        if current_utc_time < time(6  , 0) or current_utc_time > time(10,45): #change the times here(set to 6-10:45 for now (24 hour format))
+            print("Outside allowed scrape time (04:00-16:45 UTC). Exiting.")
             break
 
-        # Delay between pages
-        time.sleep(10)
-        page_number += 1
+        page_url = base_url + str(page_number)
+        print(f"Scraping page {page_number}...")
 
-# Run the scraper
-scrape_all_pages()
+        has_data = scrape_page(page_url)
+
+        if not has_data:
+            print("No more data to scrape. Exiting.")
+            break
+
+        page_number += 1
+        sleep_time.sleep(10)
+
+if __name__ == "__main__":
+    scrape_all_pages()
