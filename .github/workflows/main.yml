@@ -1,78 +1,34 @@
-name: Firebase Project CI/CD
+name: Run Scraper Script
 
 on:
-  push:
-    branches:
-      - main  # Trigger on pushes to the main branch
-  pull_request:
-    branches:
-      - main  # Trigger on pull requests to the main branch
+  schedule:
+    # This cron expression runs the job every day at 6 AM to 10 AM SAST (UTC +2)
+    - cron: "0 6-10 * * *"  # Runs at 6, 7, 8, 9, 10 AM SAST
 
 jobs:
-  setup:
+  run-scraper:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Set up Node.js (necessary for Firebase CLI)
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up Firebase service account
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" | base64 --decode > $HOME/serviceAccountKey.json
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_AUTH_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          node-version: '16'  # Ensure the node version is compatible with your project
-
-      # Install project dependencies
-      - name: Install dependencies
-        run: |
-          npm install
-
-      # Set up Firebase CLI
-      - name: Set up Firebase CLI
-        run: |
-          curl -sL https://firebase.tools | bash
-
-  test:
-    runs-on: ubuntu-latest
-    needs: setup  # Ensure setup job runs first
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
-          npm install
-          pip install google-cloud-firestore  # Install Python dependencies if needed
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run Tests
+      - name: Run scraper script
         run: |
-          npm test    # Or use pytest if you have Python tests
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test  # Ensure tests run first
-
-    steps:
-        - name: Checkout repository
-          uses: actions/checkout@v2
-  
-        - name: Set up Firebase service account
-          run: |
-            echo "$FIREBASE_SERVICE_ACCOUNT" | base64 --decode > $HOME/serviceAccountKey.json
-          env:
-            FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
-  # (Optional) Clean up job if needed
-  cleanup:
-    runs-on: ubuntu-latest
-    needs: deploy  # Ensure deploy happens first
-
-    steps:
-      - name: Cleanup Firebase Emulator (if used)
-        run: |
-          firebase emulators:stop  # Stop emulator after CI/CD job (if emulator used in any step)
-
-
-
-          name: Firebase Emulator Integration
+          python scraper.py
