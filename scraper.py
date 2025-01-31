@@ -60,11 +60,11 @@ def scrape_page(page_url):
 
 def scrape_all_pages():
     base_url = "https://www.checkers.co.za/c-2256/All-Departments?q=%3Arelevance%3AbrowseAllStoresFacetOff%3AbrowseAllStoresFacetOff&page="
-    page_number = 0 #change this number to start on a different page
+    page_number = 541
 
     while True:
         current_utc_time = datetime.now(timezone.utc).time()
-        if current_utc_time < time(6  , 0) or current_utc_time > time(10,45): #change the times here(set to 6-10:45 for now (24 hour format))
+        if current_utc_time < time(00  , 0) or current_utc_time > time(23,59):
             print("Outside allowed scrape time (04:00-16:45 UTC). Exiting.")
             break
 
