@@ -3,7 +3,7 @@ name: Run Scraper Script
 on:
   schedule:
     # This cron expression runs the job every day at 6 AM to 10 AM SAST (UTC +2)
-    - cron: "0 6-10 * * *"  # Runs at 6, 7, 8, 9, 10 AM SAST
+    - cron: "0 6-13 * * *"  # Runs at 6, 7, 8, 9, 10 AM SAST
 
 jobs:
   run-scraper:
