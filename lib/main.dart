@@ -42,23 +42,13 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.content});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[
-    OnboardingScreen(),
-    GoPremiumScreen(),
-    ShoppingListsScreen(),
-    Container(), // Placeholder for cart
-    AccountScreen(),
-  ];
-
+class MainScreenState extends State<MainScreen> {  // Removed underscore from class name
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      // Removed _selectedIndex since it's not being used to control widget display
     });
   }
 
@@ -107,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
                 _onItemTapped(3);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen(content: CartScreen())), // Navigate to CartScreen
+                  MaterialPageRoute(builder: (context) => MainScreen(content: CartScreen())),
                 );
               },
             ),
