@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/onboarding_screen.dart';
@@ -9,7 +11,11 @@ import 'screens/account_screen.dart';
 import 'screens/sign_in_screen.dart'; // Import SignInScreen
 import 'screens/cart_screen.dart'; // Import CartScreen
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(EchoApp());
 }
 

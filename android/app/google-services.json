@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "608340871829",
+    "project_id": "lc-price-check",
+    "storage_bucket": "lc-price-check.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608340871829:android:01980a3a11e6935502a99c",
+        "android_client_info": {
+          "package_name": "com.example.echoappproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApE9zCusB48pj7VN8Fzfnxi1F8nq_EKCQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
