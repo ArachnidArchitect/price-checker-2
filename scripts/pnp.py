@@ -43,7 +43,7 @@ async def scrape_page(url, page_number):
         return []
 
 # Function to save data to a JSON file
-def save_to_json(data, filename='pnp_data.json'):
+def save_to_json(data, filename='scripts/pnp_data.json'):
     with open(filename, 'a') as f:  # Append mode
         json.dump(data, f, indent=4)
         f.write('\n')  # Newline for readability
