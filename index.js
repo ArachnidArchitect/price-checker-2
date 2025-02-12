@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import path from 'path'
 import 'dotenv/config'
+import { storeController } from './controller/storeController.js'
 
 // Create an express app
 const app = express()
@@ -32,6 +33,8 @@ app.use(
 app.get('^/$|/pricechecker', (req, res) => {
     res.status(200).sendFile(path.resolve('./static/html/index.html'))
 })
+
+app.use('/checkers', storeController)
 
 app.get('*', (req, res) => {
     res.json({

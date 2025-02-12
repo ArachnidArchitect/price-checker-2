@@ -1,7 +1,7 @@
-import { connection as db } from "../config/config";
+import { connection as db } from "../config/config.js";
 
 
-class Stores{
+class Stores {
 
     static async getStore(req, res) {
         try {
@@ -21,5 +21,9 @@ class Stores{
         }
     }
 
-    
+
+}
+
+export{
+    Stores
 }
