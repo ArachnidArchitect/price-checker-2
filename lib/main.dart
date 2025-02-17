@@ -1,5 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/onboarding_screen.dart';
@@ -8,14 +6,11 @@ import 'screens/home_screen.dart';
 import 'screens/shopping_lists_screen.dart';
 import 'screens/go_premium_screen.dart';
 import 'screens/account_screen.dart';
-import 'screens/sign_in_screen.dart'; // Import SignInScreen
-import 'screens/cart_screen.dart'; // Import CartScreen
+import 'screens/sign_in_screen.dart';
+import 'screens/cart_screen.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(EchoApp());
 }
 
@@ -32,10 +27,10 @@ class EchoApp extends StatelessWidget {
       ),
       home: MainScreen(content: OnboardingScreen()), // Default to OnboardingScreen
       routes: {
-        '/register': (context) => MainScreen(content: RegisterScreen()), // RegisterScreen within MainScreen
-        '/home': (context) => MainScreen(content: HomeScreen()), // HomeScreen within MainScreen
-        '/signin': (context) => MainScreen(content: SignInScreen()), // Add route for SignInScreen
-        '/cart': (context) => MainScreen(content: CartScreen()), // Add route for CartScreen
+        '/register': (context) => MainScreen(content: RegisterScreen()),
+        '/home': (context) => MainScreen(content: HomeScreen()),
+        '/signin': (context) => MainScreen(content: SignInScreen()),
+        '/cart': (context) => MainScreen(content: CartScreen()),
       },
       debugShowCheckedModeBanner: false,
     );
@@ -51,10 +46,10 @@ class MainScreen extends StatefulWidget {
   MainScreenState createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> {  // Removed underscore from class name
+class MainScreenState extends State<MainScreen> {
   void _onItemTapped(int index) {
     setState(() {
-      // Removed _selectedIndex since it's not being used to control widget display
+      // Removed _selectedIndex since it's not being used
     });
   }
 
