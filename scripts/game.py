@@ -7,7 +7,7 @@ import time
 
 async def scrape_products(url):
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     # Add any necessary options here, e.g., headless mode
     async with webdriver.Chrome(options=options) as driver:
 
