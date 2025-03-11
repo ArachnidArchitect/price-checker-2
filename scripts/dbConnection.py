@@ -1,10 +1,10 @@
+import json
 import mysql.connector
 
-# Establish a connection to the database
 conn = mysql.connector.connect(
-    host="ben6d65e6hta2p7weqel-mysql.services.clever-cloud.com",      # Database host
+    host="ben6d65e6hta2p7weqel-mysql.services.clever-cloud.com",      
     user="uzmdloyu14uy72q5", 
-    password="uzmdloyu14uy72q5",  
+    password="n7gk3Ow7uwkExgyZSwxQ",  
     database="ben6d65e6hta2p7weqel"    
 )
 
@@ -12,13 +12,28 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 # Execute a query
-cursor.execute("SELECT * FROM")
+cursor.execute("SELECT * FROM game")
 
-# Fetch results
 results = cursor.fetchall()
 for row in results:
     print(row)
 
-# Close the cursor and connection
+
+
+# Open and read the JSON file
+with open('scripts/game_data.json', 'r') as file:
+    data = json.load(file)
+
+
+for i in data:
+    cursor.execute(
+        f'INSERT INTO game VALUES (default, "{i['name']}", {float(i['price'].replace("R", ""))}, "{i['image']}")'
+    )
+    print(i['name'] + "add to db")
+        
+
+
+
+conn.commit()
 cursor.close()
 conn.close()
