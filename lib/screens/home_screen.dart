@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchProducts() async {
-    final url = Uri.parse('https://arachnidarchitect.github.io/price-check-2-/scripts/game_data.json');
+    final url = Uri.parse('https://arachnidarchitect.github.io/price-checker-2/scripts/game_data.json');
     try {
       setState(() {
         _isLoading = true;
